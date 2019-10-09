@@ -18,6 +18,7 @@ public class PowerUpSpawner : MonoBehaviour {
     {
         starPower,
         blank,
+        gun,
         none
     }
     // Use this for initialization

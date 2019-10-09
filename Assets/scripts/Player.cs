@@ -158,26 +158,26 @@ public class Player : MonoBehaviour {
     }
 
     private bool JumpPressed() {
-        return Input.GetKeyDown("w");
+        return Input.GetKeyDown("w") || Input.GetKeyDown("up");
     }
 
     private bool LeftPressed()
     {
-        return Input.GetKey("a");
+        return Input.GetKey("a") || Input.GetKey("left");
     }
 
     private bool RightPressed()
     {
-        return Input.GetKey("d");
+        return Input.GetKey("d") || Input.GetKey("right");
     }
 
     private bool CrouchPressed()
     {
-        return Input.GetKeyDown("s");
+        return Input.GetKeyDown("s") || Input.GetKeyDown("down");
     }
 
     private bool CrouchUnpressed()
     {
-        return Input.GetKeyUp("s");
+        return Input.GetKeyUp("s") || Input.GetKeyUp("down");
     }
 }
