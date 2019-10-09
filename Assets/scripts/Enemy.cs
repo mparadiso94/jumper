@@ -53,9 +53,17 @@ public class Enemy : MonoBehaviour {
         Destroy(enemy.gameObject);
         _explosion = Instantiate(explosion, enemy.position, Quaternion.identity);
         _explosion.GetComponent<ParticleSystem>().Play();
-        GameManager.gameState = GameManager.GameState.GameOver;
         EnemySpawner.enemies.Remove(this.transform);
         Destroy(this);
+
+        if (Player.hasPowerUp && Player.powerUpType == PowerUpSpawner.Type.starPower) 
+        {
+            Debug.Log("adding 2 to score");
+            GameManager.score += 2;
+        } else {
+            Debug.Log("setting game to over");
+            GameManager.gameState = GameManager.GameState.GameOver;
+        }
     }
 
     bool PlayerCollision()

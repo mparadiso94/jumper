@@ -32,7 +32,7 @@ public class Player : MonoBehaviour {
     public static double starPowerLength = 8;
     private static bool starPowerBool = false;
     public static bool hasPowerUp = false;
-    private static PowerUpSpawner.Type type = PowerUpSpawner.Type.none;
+    public static PowerUpSpawner.Type powerUpType = PowerUpSpawner.Type.none;
     // Use this for initialization
     void Start () {
         playerState = PlayerState.Resting;
@@ -54,16 +54,15 @@ public class Player : MonoBehaviour {
         }
     }
 
-    public static void RecievePowerUp(PowerUpSpawner.Type _type)
+    public static void RecievePowerUp(PowerUpSpawner.Type type)
     {
         hasPowerUp = true;
-        type = _type;
-        Debug.Log(type);
+        powerUpType = type;
     }
 
     private void PowerUpControls()
     {
-        switch (PowerUpSpawner.type)
+        switch (powerUpType)
         {
             case PowerUpSpawner.Type.starPower:
                 if (starPowerLength < 0)
@@ -73,6 +72,10 @@ public class Player : MonoBehaviour {
                     player.gameObject.GetComponent<Renderer>().material.color = Color.white;
                     break;
                 }
+                starPowerLength -= Time.deltaTime;
+
+
+                // player changing colors controls
                 timer += Time.deltaTime;
                 if (timer > 0.5)
                 {
@@ -80,7 +83,6 @@ public class Player : MonoBehaviour {
                     starPowerBool = !starPowerBool;
                     timer = 0;
                 }
-                starPowerLength -= Time.deltaTime;
                 break;
             case PowerUpSpawner.Type.blank:
                 break;
