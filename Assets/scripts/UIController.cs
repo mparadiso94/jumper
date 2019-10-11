@@ -49,7 +49,15 @@ public class UIController : MonoBehaviour {
             powerUpTimeLeftText.enabled = true;
             Vector3 pos = Player.playerPosition;
             powerUpTimeLeftText.GetComponent<Transform>().position= new Vector3(pos.x * (float)(756/6.89) + 975, pos.y * (float)(465/4.35) + 700, pos.z);
-            powerUpTimeLeftText.text = Player.starPowerLength.ToString("0.0");     
+            switch (Player.powerUpType)
+            {
+                case PowerUp.Type.starPower:
+                    powerUpTimeLeftText.text = PowerUp.starPowerTimer.ToString("0.0");
+                    break;
+                case PowerUp.Type.gun:
+                    powerUpTimeLeftText.text = PowerUp.bulletsLeft.ToString();
+                    break;
+            }
         }
         else
         {

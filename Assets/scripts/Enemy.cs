@@ -7,9 +7,10 @@ public class Enemy : MonoBehaviour {
     public Transform enemy;
     public Transform explosion;
     private static Vector3 SpawnPosition;
+    public double lifeLength;
 
+    private double timer;
     private double speed = 10;
-    private string guid;
     private double horizontalOffset = 20;
     private double verticalOffset = 2.10;
     private double collisionDistance = 1;
@@ -27,6 +28,12 @@ public class Enemy : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         MoveAcrossTheScreen();
+        timer += Time.deltaTime;
+
+        if (timer > lifeLength)
+        {
+            EnemySpawner.ClearEnemy(enemy);
+        }
 	}
 
     void MoveAcrossTheScreen()
@@ -37,32 +44,31 @@ public class Enemy : MonoBehaviour {
         enemy.position = new Vector3(enemy.position.x - ((float)speed * Time.deltaTime), enemy.position.y, enemy.position.z);
         if (PlayerCollision())
         {
-            Debug.Log("Player Collision!");
-            Despawn();
+            bool shouldEndGame = !(Player.hasPowerUp && Player.powerUpType.Equals(PowerUp.Type.starPower));
+            Despawn(shouldEndGame , 2);
         }
         if (!jumpedOver && Player.playerPosition.x > enemy.position.x)
         {
-            Debug.Log("jumpedOver");
             jumpedOver = true;
             GameManager.score++;
         }
     }
 
-    void Despawn()
+    public void Despawn(bool shouldEndGame, int pointsToAdd)
     {
         Destroy(enemy.gameObject);
         _explosion = Instantiate(explosion, enemy.position, Quaternion.identity);
         _explosion.GetComponent<ParticleSystem>().Play();
+        Destroy(_explosion.gameObject, 2);
         EnemySpawner.enemies.Remove(this.transform);
         Destroy(this);
 
-        if (Player.hasPowerUp && Player.powerUpType == PowerUpSpawner.Type.starPower) 
+        if (shouldEndGame) 
         {
-            Debug.Log("adding 2 to score");
-            GameManager.score += 2;
-        } else {
-            Debug.Log("setting game to over");
             GameManager.gameState = GameManager.GameState.GameOver;
+        }
+        else {
+            GameManager.score += pointsToAdd;
         }
     }
 

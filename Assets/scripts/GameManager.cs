@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour {
 
     public void Retry()
     {
-        EnemySpawner.ClearOldEnemies();
+        EnemySpawner.ClearAllEnemies();
         score = 0;
         gameState = GameState.Playing;
     }

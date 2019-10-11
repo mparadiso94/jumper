@@ -5,8 +5,10 @@ using UnityEngine;
 public class Player : MonoBehaviour {
     // Player objects
     public Transform player;
+    public static Transform playerTransform;
     public static Vector3 playerPosition;
     public static Vector3 StartPosition;
+    public static bool isCrouching;
     private PlayerState playerState;
     private enum PlayerState
     {
@@ -28,13 +30,12 @@ public class Player : MonoBehaviour {
     private double HorizontalSpeed = 5;
 
     // Power Up vars
-    private static double timer = 0;
-    public static double starPowerLength = 8;
-    private static bool starPowerBool = false;
     public static bool hasPowerUp = false;
-    public static PowerUpSpawner.Type powerUpType = PowerUpSpawner.Type.none;
+    public static PowerUp.Type powerUpType = PowerUp.Type.none;
+
     // Use this for initialization
     void Start () {
+        playerTransform = player;
         playerState = PlayerState.Resting;
         StartPosition = player.position;
     }
@@ -47,46 +48,12 @@ public class Player : MonoBehaviour {
         playerPosition = player.position;
 
         KeyboardControls();
-
-        if (hasPowerUp)
-        {
-            PowerUpControls();
-        }
     }
 
-    public static void RecievePowerUp(PowerUpSpawner.Type type)
+    public static void RecievePowerUp(PowerUp.Type type)
     {
         hasPowerUp = true;
         powerUpType = type;
-    }
-
-    private void PowerUpControls()
-    {
-        switch (powerUpType)
-        {
-            case PowerUpSpawner.Type.starPower:
-                if (starPowerLength < 0)
-                {
-                    hasPowerUp = false;
-                    starPowerLength = 10;
-                    player.gameObject.GetComponent<Renderer>().material.color = Color.white;
-                    break;
-                }
-                starPowerLength -= Time.deltaTime;
-
-
-                // player changing colors controls
-                timer += Time.deltaTime;
-                if (timer > 0.5)
-                {
-                    player.gameObject.GetComponent<Renderer>().material.color = starPowerBool ? Color.white : Color.red;
-                    starPowerBool = !starPowerBool;
-                    timer = 0;
-                }
-                break;
-            case PowerUpSpawner.Type.blank:
-                break;
-        }
     }
 
     private void KeyboardControls()
@@ -101,11 +68,16 @@ public class Player : MonoBehaviour {
             MoveHorizontally(LeftPressed(), RightPressed());
         }
 
-        if (CrouchPressed())
+        if (CrouchPressed() && playerState.Equals(PlayerState.Resting))
         {
             player.localScale = crouchScale;
             player.position = new Vector3(player.position.x, StartPosition.y - (float)0.5, StartPosition.z);
+            isCrouching = true;
+        } else
+        {
+            isCrouching = false;
         }
+
 
         if (CrouchUnpressed())
         {
@@ -124,7 +96,6 @@ public class Player : MonoBehaviour {
                 MoveVertically(false);
                 return;
         }
-
     }
 
     private void MoveHorizontally(bool left, bool right)
@@ -175,7 +146,7 @@ public class Player : MonoBehaviour {
 
     private bool CrouchPressed()
     {
-        return Input.GetKeyDown("s") || Input.GetKeyDown("down");
+        return Input.GetKey("s") || Input.GetKey("down");
     }
 
     private bool CrouchUnpressed()

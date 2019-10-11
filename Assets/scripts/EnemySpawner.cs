@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour {
-    public static HashSet<Transform> enemies;
+    public static ArrayList enemies;
     public Transform enemyTransform;
     public Transform croutchEnemyTransform;
 
@@ -14,7 +14,7 @@ public class EnemySpawner : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        enemies = new HashSet<Transform>();
+        enemies = new ArrayList();
         spawnTimer = 0;
         rand = new System.Random();
     }
@@ -41,7 +41,7 @@ public class EnemySpawner : MonoBehaviour {
             enemies.Add(Instantiate(croutchEnemyTransform, new Vector3(0, 10, 0), Quaternion.identity));
     }
 
-    public static void ClearOldEnemies()
+    public static void ClearAllEnemies()
     {
         foreach  (Transform enemy in enemies)
         {
@@ -50,4 +50,42 @@ public class EnemySpawner : MonoBehaviour {
         enemies.Clear();
     }
 
+    public static void ClearEnemy(Transform enemy)
+    {
+        Destroy(enemy.gameObject);
+        enemies.Remove(enemy);
+
+    }
+
+    public static void ShootFirstEnemy(bool shootCrouchingEnemy)
+    {
+
+        foreach (Transform enemyPrefab in enemies)
+        {
+            Enemy e = enemyPrefab.GetComponent<Enemy>();
+            if (shootCrouchingEnemy)
+            {
+                if (e.name.StartsWith("Crouch"))
+                {
+                    if (e.transform.position.x > Player.playerPosition.x)
+                    {
+                        bool shouldEndGame = false;
+                        e.Despawn(shouldEndGame, 3);
+                        break;
+                    }
+                }
+            } else
+            {
+                if (!e.name.StartsWith("Crouch"))
+                {
+                    if (e.transform.position.x > Player.playerPosition.x)
+                    {
+                        bool shouldEndGame = false;
+                        e.Despawn(shouldEndGame, 3);
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }
